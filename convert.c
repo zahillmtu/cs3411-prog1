@@ -80,7 +80,7 @@ int main () {
     char type;
     int data = 0;
     char numOfBits = 0;
-    float floatData = 0;
+    int floatData = 0;
 
     FILE *fp = fopen(FILENAME, "r");
     // Check for valid file
@@ -118,13 +118,13 @@ int main () {
                 printf("%d\n", data);
                 break;
 
-//            case (2):
-               // for (int i = 0; i < 32; i++) {
-               //   data = (floatData << 1) | readBin(fp);
-               // }
+           // case (2):
+           //     for (int i = 0; i < 32; i++) {
+           //       data = (floatData << 1) | readBin(fp);
+           //     }
 
-               // printf("%f\n", floatData);
-               // break;
+           //     printf("%f\n", floatData);
+           //     break;
 
             case (3):
                 exit(0);
