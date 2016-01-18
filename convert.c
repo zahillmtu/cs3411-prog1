@@ -5,75 +5,107 @@
  */
 
 
-	/*
- 	 * This program is designed to convert
- 	 * the contents of a binary file to
- 	 * either a char, int, or float
- 	 */
+    /*
+     * This program is designed to convert
+     * the contents of a binary file to
+     * either a char, int, or float
+     */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdbool.h>
 
 #define FILENAME "file.dat"
-#define CURRENTBYTE
-#define CURRENTBIT
 
-char readBin (fp) {
+int CURRENTBYTE = -1;
+int CURRENTBIT = 0;
 
-    static int data[8];
-    unsigned char mask = 00000001;
-    int val = -1;
-    bool hasChanged;
+char readBin (FILE *fp) {
+
+
+
+    static char data[8];
+    unsigned char mask = 1;
+    char val = -1;
+    bool hasChanged = false;
 
     // Check if intialized, if not then do so
-    if CURRENTBYTE == NULL {
-        fread(CURRENTBYTE, sizeof(char), 1, fp);
+    if (CURRENTBYTE == -1) {
+        fread(&CURRENTBYTE, sizeof(char), 1, fp);
         CURRENTBIT = 0;
-        hasChanged = TRUE;
+        hasChanged = true;
     }
 
     // if all bits have been used, read in new bits
     if (CURRENTBIT == 8) {
-        fread(CURRENTBYTE, sizeof(char), 1, fp);
+        fread(&CURRENTBYTE, sizeof(char), 1, fp);
         CURRENTBIT = 0;
-        hasChanged = TRUE;
+        hasChanged = true;
     }
 
     // update array if needed
     if (hasChanged) {
-        for (i = 0, i < 8, i++) {
-            val = mask & (CURRENTBYTE << i);
+        for (int i = 0; i < 8; i++) {
+            val = mask & (CURRENTBYTE >> (7 - i));
             data[i] = val;
         }
-        hasChanged = FALSE;
+        hasChanged = false;
     }
 
-    return (data[CURRENTBYTE++])
+    return (data[CURRENTBIT++]);
 
 }
 
-removeType () {
+/* Return the type of data stored next */
+char removeType (FILE *fp) {
+    char type = 0;
+    char val;
 
+    // find the value of the first bit and shift
+    type = readBin (fp);
+    type = type << 1;
+    // do again for second bit
+    val = readBin (fp);
+    type = type | val;
+
+    printf("TYPE IS: %d\n", type);
+    return type;
 
 }
 
-shiftBits (data, shiftNum) {
-
-}
-
-char returnType () {
-
-
-}
 
 int main () {
 
-	FILE *fp = fopen(FILENAME, "r")
-	// Check for valid file
-	if(fp == NULL) {
-		perror("fopen");
-		exit(EXIT_FAILURE)
-	}
+    char type;
+    char data = 0;
 
+    FILE *fp = fopen(FILENAME, "r");
+    // Check for valid file
+    if(fp == NULL) {
+	perror("fopen");
+	exit(EXIT_FAILURE);
+    }
+
+    // RUN WHILE and intialize data
+    while (1) {
+        data = 0;
+        type = removeType(fp);
+
+        switch (type) {
+            case (0):
+                for (int i = 0; i < 7; i++) {
+                  data = (data << 1) | readBin(fp);
+                }
+
+                printf("%c\n", data);
+                break;
+            case (3):
+                exit(0);
+        }
+    }
+
+    return 0;
 }
 
 /*

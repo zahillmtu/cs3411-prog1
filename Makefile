@@ -1,5 +1,5 @@
 CC = gcc
-CCFLAGS = -std=C99 -g -Wall -Wextra
+CCFLAGS = -std=c99 -g -Wall -Wextra
 EXEC = convert.c
 OBJS = convert
 
