@@ -1,16 +1,18 @@
 CC = gcc
 CCFLAGS = -std=c99 -g -Wall -Wextra
-EXEC = convert.c
-OBJS = convert
+EXEC = convert
+OBJS = convert.o
 
 ${EXEC}: ${OBJS}
-	${CC} ${CCFLAGS} ${EXEC} -o ${OBJS}
+	${CC} ${CCFLAGS} -o ${EXEC} ${OBJS}
 
 .c.o:
 	${CC} ${CCFLAGS} -c $<
 
+convert.o: convert.c
+
 run: ${EXEC}
-	./${EXEC}
+	./${EXEC)
 
 clean:
 	rm -f ${EXEC} ${OBJS}
