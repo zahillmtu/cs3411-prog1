@@ -78,7 +78,9 @@ char removeType (FILE *fp) {
 int main () {
 
     char type;
-    char data = 0;
+    int data = 0;
+    char numOfBits = 0;
+    float floatData = 0;
 
     FILE *fp = fopen(FILENAME, "r");
     // Check for valid file
@@ -90,18 +92,46 @@ int main () {
     // RUN WHILE and intialize data
     while (1) {
         data = 0;
+        floatData = 0;
+        numOfBits = 0;
         type = removeType(fp);
 
         switch (type) {
             case (0):
                 for (int i = 0; i < 7; i++) {
-                  data = (data << 1) | readBin(fp);
+                    data = (data << 1) | readBin(fp);
                 }
 
                 printf("%c\n", data);
                 break;
+
+            case (1):
+                for (int i = 0; i < 5; i++) {
+                    numOfBits = (numOfBits << 1) | readBin(fp);
+                }
+                numOfBits = numOfBits + 1;
+                printf("%d\n", numOfBits);
+                for (int i = 0; i < numOfBits; i++) {
+                    data = (data << 1) | readBin(fp);
+                }
+
+                printf("%d\n", data);
+                break;
+
+//            case (2):
+               // for (int i = 0; i < 32; i++) {
+               //   data = (floatData << 1) | readBin(fp);
+               // }
+
+               // printf("%f\n", floatData);
+               // break;
+
             case (3):
                 exit(0);
+
+            default:
+                printf("Invalid data type - Exiting\n");
+                exit(1);
         }
     }
 

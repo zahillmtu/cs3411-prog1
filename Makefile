@@ -12,7 +12,7 @@ ${EXEC}: ${OBJS}
 convert.o: convert.c
 
 run: ${EXEC}
-	./${EXEC)
+	./${EXEC}
 
 clean:
 	rm -f ${EXEC} ${OBJS}
