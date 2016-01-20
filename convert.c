@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define FILENAME "file.dat"
 
@@ -80,7 +81,17 @@ int main () {
     char type;
     int data = 0;
     char numOfBits = 0;
-    int floatData = 0;
+    uint8_t temp;
+
+
+    typedef union {
+        uint32_t dataBits;
+        uint8_t b[4];
+        float f;
+
+    } floatData;
+
+    floatData floatBits;
 
     FILE *fp = fopen(FILENAME, "r");
     // Check for valid file
@@ -92,9 +103,11 @@ int main () {
     // RUN WHILE and intialize data
     while (1) {
         data = 0;
-        floatData = 0;
+        floatBits.dataBits = 0;
         numOfBits = 0;
         type = removeType(fp);
+
+
 
         switch (type) {
             case (0):
@@ -102,7 +115,7 @@ int main () {
                     data = (data << 1) | readBin(fp);
                 }
 
-                printf("%c\n", data);
+                printf("'char = %c'\n", data);
                 break;
 
             case (1):
@@ -110,21 +123,26 @@ int main () {
                     numOfBits = (numOfBits << 1) | readBin(fp);
                 }
                 numOfBits = numOfBits + 1;
-                printf("%d\n", numOfBits);
                 for (int i = 0; i < numOfBits; i++) {
                     data = (data << 1) | readBin(fp);
                 }
 
-                printf("%d\n", data);
+                printf("'int = %d'\n", data);
                 break;
 
-           // case (2):
-           //     for (int i = 0; i < 32; i++) {
-           //       data = (floatData << 1) | readBin(fp);
-           //     }
+            case (2):
+                temp = 0;
+                for (int i = 0; i < 32; i++) {
+                    data = (floatBits.dataBits << 1) | readBin(fp);
+                }
+                for (int i = 0; i < 3; i++) {
+                    temp = floatBits.b[i];
+                    floatBits.b[i] = floatBits.b[i + 1];
+                    floatBits.b[i + 1] = temp;
+                }
 
-           //     printf("%f\n", floatData);
-           //     break;
+                printf("'float = %f'\n", floatBits.f);
+                break;
 
             case (3):
                 exit(0);
