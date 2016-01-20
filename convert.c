@@ -49,6 +49,7 @@ char readBin (FILE *fp) {
     if (hasChanged) {
         for (int i = 0; i < 8; i++) {
             val = mask & (CURRENTBYTE >> (7 - i));
+            printf("val: %d\n", val);
             data[i] = val;
         }
         hasChanged = false;
@@ -82,6 +83,7 @@ int main () {
     int data = 0;
     char numOfBits = 0;
     uint8_t temp;
+    int k = 0;
 
 
     typedef union {
@@ -100,13 +102,11 @@ int main () {
 	exit(EXIT_FAILURE);
     }
 
-    // RUN WHILE and intialize data
     while (1) {
         data = 0;
         floatBits.dataBits = 0;
         numOfBits = 0;
         type = removeType(fp);
-
 
 
         switch (type) {
@@ -116,6 +116,10 @@ int main () {
                 }
 
                 printf("'char = %c'\n", data);
+                k++;
+                if (k == 4) {
+                    exit(1);
+                }
                 break;
 
             case (1):
@@ -133,15 +137,21 @@ int main () {
             case (2):
                 temp = 0;
                 for (int i = 0; i < 32; i++) {
-                    data = (floatBits.dataBits << 1) | readBin(fp);
+                    floatBits.dataBits = (floatBits.dataBits << 1) | readBin(fp);
+                    printf("DATA: %d\n", floatBits.dataBits);
                 }
-                for (int i = 0; i < 3; i++) {
-                    temp = floatBits.b[i];
-                    floatBits.b[i] = floatBits.b[i + 1];
-                    floatBits.b[i + 1] = temp;
-                }
+                //for (int i = 0; i < 3; i++) {
+                //    temp = floatBits.b[i];
+                //    printf("b.%d: %d\n", i, floatBits.b[i]);
+                //     printf("b.3: %d\n", floatBits.b[3]);
+                //    floatBits.b[i] = floatBits.b[i + 1];
+                //    floatBits.b[i + 1] = temp;
+                //}
+                // printf("final b.3: %d\n", floatBits.b[3]);
+                //  printf("final b.2: %d\n", floatBits.b[2]);
 
                 printf("'float = %f'\n", floatBits.f);
+
                 break;
 
             case (3):
