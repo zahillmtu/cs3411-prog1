@@ -49,7 +49,6 @@ char readBin (FILE *fp) {
     if (hasChanged) {
         for (int i = 0; i < 8; i++) {
             val = mask & (CURRENTBYTE >> (7 - i));
-            printf("val: %d\n", val);
             data[i] = val;
         }
         hasChanged = false;
@@ -71,7 +70,6 @@ char removeType (FILE *fp) {
     val = readBin (fp);
     type = type | val;
 
-    printf("TYPE IS: %d\n", type);
     return type;
 
 }
@@ -138,17 +136,7 @@ int main () {
                 temp = 0;
                 for (int i = 0; i < 32; i++) {
                     floatBits.dataBits = (floatBits.dataBits << 1) | readBin(fp);
-                    printf("DATA: %d\n", floatBits.dataBits);
                 }
-                //for (int i = 0; i < 3; i++) {
-                //    temp = floatBits.b[i];
-                //    printf("b.%d: %d\n", i, floatBits.b[i]);
-                //     printf("b.3: %d\n", floatBits.b[3]);
-                //    floatBits.b[i] = floatBits.b[i + 1];
-                //    floatBits.b[i + 1] = temp;
-                //}
-                // printf("final b.3: %d\n", floatBits.b[3]);
-                //  printf("final b.2: %d\n", floatBits.b[2]);
 
                 printf("'float = %f'\n", floatBits.f);
 
