@@ -80,8 +80,6 @@ int main () {
     char type;
     int data = 0;
     char numOfBits = 0;
-    uint8_t temp;
-    int k = 0;
 
 
     typedef union {
@@ -113,11 +111,7 @@ int main () {
                     data = (data << 1) | readBin(fp);
                 }
 
-                printf("'char = %c'\n", data);
-                k++;
-                if (k == 4) {
-                    exit(1);
-                }
+                printf("'char = '%c''\n", data);
                 break;
 
             case (1):
@@ -133,7 +127,6 @@ int main () {
                 break;
 
             case (2):
-                temp = 0;
                 for (int i = 0; i < 32; i++) {
                     floatBits.dataBits = (floatBits.dataBits << 1) | readBin(fp);
                 }
@@ -143,14 +136,17 @@ int main () {
                 break;
 
             case (3):
+                fclose(fp);
                 exit(0);
 
             default:
                 printf("Invalid data type - Exiting\n");
+                fclose(fp);
                 exit(1);
         }
     }
 
+    fclose(fp);
     return 0;
 }
 
