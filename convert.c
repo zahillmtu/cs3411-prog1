@@ -22,9 +22,8 @@
 int CURRENTBYTE = -1;
 int CURRENTBIT = 0;
 
+/* Returns the next bit in the file, either a 1 or 0 */
 char readBin (FILE *fp) {
-
-
 
     static char data[8];
     unsigned char mask = 1;
@@ -54,6 +53,7 @@ char readBin (FILE *fp) {
         hasChanged = false;
     }
 
+    // return the next bit in byte
     return (data[CURRENTBIT++]);
 
 }
@@ -74,14 +74,13 @@ char removeType (FILE *fp) {
 
 }
 
-
 int main () {
 
     char type;
     int data = 0;
     char numOfBits = 0;
 
-
+    // Create a union to do bit operations on the floating point number
     typedef union {
         uint32_t dataBits;
         uint8_t b[4];
@@ -98,6 +97,7 @@ int main () {
 	exit(EXIT_FAILURE);
     }
 
+    // Run while to keep finding the next element until type 11 is reached
     while (1) {
         data = 0;
         floatBits.dataBits = 0;
@@ -107,6 +107,7 @@ int main () {
 
         switch (type) {
             case (0):
+                // if type 0 then char and is always 7 bit
                 for (int i = 0; i < 7; i++) {
                     data = (data << 1) | readBin(fp);
                 }
@@ -115,9 +116,12 @@ int main () {
                 break;
 
             case (1):
+                // if type 01 then int
+                // First check for the number of bits in int (always 5 bit indicator)
                 for (int i = 0; i < 5; i++) {
                     numOfBits = (numOfBits << 1) | readBin(fp);
                 }
+                // Use number of bits to find the data for the int
                 numOfBits = numOfBits + 1;
                 for (int i = 0; i < numOfBits; i++) {
                     data = (data << 1) | readBin(fp);
@@ -127,6 +131,7 @@ int main () {
                 break;
 
             case (2):
+                // if type 10 then float and is always 32 bits
                 for (int i = 0; i < 32; i++) {
                     floatBits.dataBits = (floatBits.dataBits << 1) | readBin(fp);
                 }
@@ -136,10 +141,12 @@ int main () {
                 break;
 
             case (3):
+                // if type 11 then end of file so close
                 fclose(fp);
                 exit(0);
 
             default:
+                // if type is anything else, error and exit
                 printf("Invalid data type - Exiting\n");
                 fclose(fp);
                 exit(1);
