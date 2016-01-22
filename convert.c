@@ -74,7 +74,7 @@ char removeType (FILE *fp) {
 
 }
 
-int main () {
+int main (void) {
 
     char type;
     int data = 0;
