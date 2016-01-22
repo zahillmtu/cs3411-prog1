@@ -29,17 +29,28 @@ char readBin (FILE *fp) {
     unsigned char mask = 1;
     char val = -1;
     bool hasChanged = false;
+    int readCheck = 0;
 
     // Check if intialized, if not then do so
     if (CURRENTBYTE == -1) {
-        fread(&CURRENTBYTE, sizeof(char), 1, fp);
+        readCheck = fread(&CURRENTBYTE, sizeof(char), 1, fp);
+        if (readCheck < 1) {
+            printf("An error occured while reading - Exiting\n");
+            fclose(fp);
+            exit(1);
+        }
         CURRENTBIT = 0;
         hasChanged = true;
     }
 
     // if all bits have been used, read in new bits
     if (CURRENTBIT == 8) {
-        fread(&CURRENTBYTE, sizeof(char), 1, fp);
+        readCheck = fread(&CURRENTBYTE, sizeof(char), 1, fp);
+        if (readCheck < 1) {
+            printf("An error occured while reading - Exiting\n");
+            fclose(fp);
+            exit(1);
+        }
         CURRENTBIT = 0;
         hasChanged = true;
     }
@@ -161,4 +172,6 @@ int main (void) {
  * References
  *  Masking
  *      http://crasseux.com/books/ctutorial/Masks.html
+ *  How to edit file to test malform stuff
+ *      http://stackoverflow.com/questions/839227/how-to-edit-binary-file-on-the-unix-systems
  */
