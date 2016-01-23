@@ -19,26 +19,28 @@
 
 #define FILENAME "file.dat"
 
-int CURRENTBYTE = -1;
+int CURRENTBYTE = 0;
 int CURRENTBIT = 0;
+bool NOTINITIALIZED = true;
 
 /* Returns the next bit in the file, either a 1 or 0 */
 char readBin (FILE *fp) {
 
     static char data[8];
     unsigned char mask = 1;
-    char val = -1;
+    unsigned char val = 0;
     bool hasChanged = false;
     int readCheck = 0;
 
     // Check if intialized, if not then do so
-    if (CURRENTBYTE == -1) {
+    if (NOTINITIALIZED) {
         readCheck = fread(&CURRENTBYTE, sizeof(char), 1, fp);
         if (readCheck < 1) {
             printf("An error occured while reading - Exiting\n");
             fclose(fp);
             exit(1);
         }
+        NOTINITIALIZED = false;
         CURRENTBIT = 0;
         hasChanged = true;
     }
@@ -123,7 +125,7 @@ int main (void) {
                     data = (data << 1) | readBin(fp);
                 }
 
-                printf("'char = '%c''\n", data);
+                printf("char = '%c'\n", data);
                 break;
 
             case (1):
@@ -138,7 +140,7 @@ int main (void) {
                     data = (data << 1) | readBin(fp);
                 }
 
-                printf("'int = %d'\n", data);
+                printf("int = %d\n", data);
                 break;
 
             case (2):
@@ -147,7 +149,7 @@ int main (void) {
                     floatBits.dataBits = (floatBits.dataBits << 1) | readBin(fp);
                 }
 
-                printf("'float = %f'\n", floatBits.f);
+                printf("float = %f\n", floatBits.f);
 
                 break;
 
